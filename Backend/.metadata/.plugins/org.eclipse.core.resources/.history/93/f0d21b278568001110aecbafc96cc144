@@ -1,0 +1,120 @@
+package com.fingenie.banking_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fingenie.banking_service.DTO.AccountDTO;
+import com.fingenie.banking_service.DTO.AccountUpdateDTO;
+import com.fingenie.banking_service.DTO.UserResponseDTO;
+import com.fingenie.banking_service.entity.Account;
+import com.fingenie.banking_service.exception.AccountNotFoundException;
+import com.fingenie.banking_service.feign.UserFeignClient;
+import com.fingenie.banking_service.repository.AccountRepo;
+
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
+public class AccountServiceImp implements AccountService {
+	
+	@Autowired
+	RestTemplate rt;
+
+	@Autowired
+	private AccountRepo accountRepo;
+
+	@Autowired
+	private UserFeignClient userFeignClient;
+
+	@Override
+	public Account createAccount(AccountDTO accdto) {
+
+		
+
+			
+			
+			
+			String url = "http://user-service/users/getuserbyid/" + accdto.getUserId();
+
+			UserResponseDTO user= rt.getForObject(url, UserResponseDTO.class);
+
+			Account account = new Account();
+
+			account.setUserId(user.getId());
+
+			account.setAccHolder(user.getName());
+
+			account.setBalance(0.0);
+
+			account.setAccType(accdto.getAccType());
+
+			return accountRepo.save(account);
+
+		
+	}
+
+	@Override
+	public Account getAccountById(Long id) {
+
+		return accountRepo.findById(id).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+
+		return accountRepo.findAll();
+	}
+
+	@Override
+	public List<Account> getAccountByUserId(Long userId) {
+		
+		String url = "http://user-service/users/getuserbyid/" + userId;
+
+		UserResponseDTO user= rt.getForObject(url, UserResponseDTO.class);
+
+		List<Account> accounts = accountRepo.findByUserId(userId);
+
+		if (accounts.isEmpty()) {
+			throw new AccountNotFoundException("No Accounts not found for user");
+		}
+
+		return accounts;
+
+	}
+
+	@Override
+	public Account updateAccount(AccountUpdateDTO accdto){
+		
+		
+		Account acc=getAccountById(accdto.getAccId());
+		
+		acc.setAccType(accdto.getAccType());
+
+		
+		
+		return accountRepo.save(acc);
+	}
+
+	@Override
+	public void deleteById(long id) {
+		// TODO Auto-generated method stub
+       Account acc = accountRepo.findById(id).orElse(null);
+       if(acc==null) {
+    	   throw new AccountNotFoundException("Account not found for user");
+       }
+
+		accountRepo.deleteById(id);
+
+	}
+
+	@Override
+	public void deleteByUserID(long userId) {
+		// TODO Auto-generated method stub
+		accountRepo.deleteByUserId(userId);
+
+	}
+
+}

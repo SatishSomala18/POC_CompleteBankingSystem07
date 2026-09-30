@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="jakarta.persistence.Table"/>
+    <fullyQualifiedTypeName name="jakarta.persistence.Id"/>
+    <fullyQualifiedTypeName name="com.fingenie.user_service.entity.User"/>
+    <fullyQualifiedTypeName name="com.fingenie.banking_service.DTO.AccountDTO"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="com.wipro.auth_service.entity.User"/>
+    <fullyQualifiedTypeName name="com.fingenie.wealth_service.entity.Transaction"/>
+</qualifiedTypeNameHistroy>

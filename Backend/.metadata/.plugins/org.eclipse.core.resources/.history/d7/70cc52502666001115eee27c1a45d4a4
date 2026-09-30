@@ -1,0 +1,14 @@
+package com.fingenie.user_service.entity;
+
+public class CreditProfile{
+   private Long id;
+   private int creditScore;
+   private double monthlyIncome;
+   
+   public CreditProfile(){
+	   
+   }
+   
+   
+
+}

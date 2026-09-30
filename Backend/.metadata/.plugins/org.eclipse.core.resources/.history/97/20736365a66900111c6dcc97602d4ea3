@@ -1,0 +1,156 @@
+package com.fingenie.wealth_service.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.fingenie.wealth_service.dto.LoanRequestDTO;
+import com.fingenie.wealth_service.dto.UserResponseDTO;
+import com.fingenie.wealth_service.entity.Account;
+import com.fingenie.wealth_service.entity.Loan;
+import com.fingenie.wealth_service.repository.LoanRepository;
+
+class LoanServiceImpTest {
+
+    @Mock
+    private LoanRepository loanRepository;
+
+    @Mock
+    private EMICalculatorService emiService;
+
+    @Mock
+    private RestTemplate rt;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @InjectMocks
+    private LoanServiceImp service;
+
+    private Loan loan;
+    private LoanRequestDTO dto;
+    private Account account;
+    private UserResponseDTO user;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+
+        loan = new Loan();
+        loan.setId(1L);
+        loan.setAmount(10000.0);
+        loan.setTenureMonths(12);
+        loan.setStatus("PENDING");
+        loan.setAccountId(1L);
+        loan.setUserId(1L);
+
+        dto = new LoanRequestDTO(10000.0, 12, 1L);
+
+        account = new Account();
+        account.setUserId(1L);
+
+        user = new UserResponseDTO();
+        user.setName("Satish");
+        user.setCreditScore(700);
+    }
+
+    @Test
+    void testApplyLoan_Success() {
+        when(request.getHeader("Authorization")).thenReturn("token");
+
+       
+        when(rt.exchange(contains("account"), eq(HttpMethod.GET), any(), eq(Account.class)))
+                .thenReturn(ResponseEntity.ok(account));
+
+     
+        when(emiService.calculateEmi(anyDouble(), anyInt(), anyInt())).thenReturn(900.0);
+
+      
+        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
+
+       
+        when(rt.exchange(contains("users"), eq(HttpMethod.GET), any(), eq(UserResponseDTO.class)))
+                .thenReturn(ResponseEntity.ok(user));
+
+        var result = service.applyLoan(dto);
+
+        assertNotNull(result);
+        assertEquals("PENDING", result.getStatus());
+    }
+
+    @Test
+    void testApplyLoan_InvalidAmount() {
+        dto.setAmount(-100.0);
+
+        assertThrows(RuntimeException.class, () -> {
+            service.applyLoan(dto);
+        });
+    }
+
+    @Test
+    void testUpdateLoan_Success() {
+        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+        when(emiService.calculateEmi(anyDouble(), anyInt(), anyInt())).thenReturn(900.0);
+        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
+
+        dto.setAmount(20000.0);
+
+        var result = service.updateLoan(1L, dto);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdateLoan_AlreadyApproved() {
+        loan.setStatus("APPROVED");
+
+        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+
+        assertThrows(RuntimeException.class, () -> {
+            service.updateLoan(1L, dto);
+        });
+    }
+
+    @Test
+    void testApproveLoan_Success() {
+        loan.setStatus("PENDING");
+
+        when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+        when(loanRepository.save(any(Loan.class))).thenReturn(loan);
+
+        when(request.getHeader("Authorization")).thenReturn("token");
+
+       
+        when(rt.exchange(contains("deposit"), eq(HttpMethod.POST), any(), any()))
+                .thenReturn(ResponseEntity.ok(null));
+
+        // mock user API
+        when(rt.exchange(contains("users"), eq(HttpMethod.GET), any(), eq(UserResponseDTO.class)))
+                .thenReturn(ResponseEntity.ok(user));
+
+        var result = service.approveLoan(1L);
+
+        assertEquals("APPROVED", result.getStatus());
+    }
+
+    @Test
+    void testDeleteLoan_NotFound() {
+        when(loanRepository.existsById(1L)).thenReturn(false);
+
+        assertThrows(RuntimeException.class, () -> {
+            service.deleteById(1L);
+        });
+    }
+}

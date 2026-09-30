@@ -1,0 +1,61 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.entity.User;
+
+public class UserServiceImp implements IUserService {
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Override
+	public UserResponseDTO addUser(UserDTO usedto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserResponseDTO updateUser(UserDTO usedto, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserResponseDTO getUserById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserResponseDTO> getAllUsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<UserResponseDTO> getUsersByRole(String role) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public User convertToEntity(UserDTO userdto) {
+		User user=new User();
+		user.setEmail(userdto.getEmail());
+		user.setName(userdto.getName());
+		user.setPassword(passwordEncoder.encode(userdto.getPassword()));
+		return user;
+	}
+
+}

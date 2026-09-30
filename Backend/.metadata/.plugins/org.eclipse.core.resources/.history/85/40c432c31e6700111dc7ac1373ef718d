@@ -1,0 +1,5 @@
+package com.fingenie.user_service.controller;
+
+public class CreditProfileRestController {
+
+}

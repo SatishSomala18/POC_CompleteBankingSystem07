@@ -1,0 +1,9 @@
+package com.wipro.auth_service.factory;
+
+public class FixedOtpGenerator implements OtpGenerator {
+
+    @Override
+    public String generateOtp() {
+        return "123456";
+    }
+}

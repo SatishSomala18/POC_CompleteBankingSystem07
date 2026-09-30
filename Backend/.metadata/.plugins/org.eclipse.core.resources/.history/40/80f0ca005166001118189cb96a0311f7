@@ -1,0 +1,17 @@
+package com.fingenie.user_service.dto;
+
+import java.time.LocalDateTime;
+
+import com.fingenie.user_service.entity.User;
+
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+
+public class UserSecurityResponseDTO {
+	
+	private Long id;
+	private String otp;
+	private LocalDateTime expiryTime;
+	private Long userId;
+
+}

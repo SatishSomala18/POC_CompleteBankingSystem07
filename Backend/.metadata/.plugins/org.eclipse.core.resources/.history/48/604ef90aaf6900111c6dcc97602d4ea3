@@ -1,0 +1,134 @@
+package com.fingenie.banking_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fingenie.banking_service.DTO.AccountDTO;
+import com.fingenie.banking_service.DTO.AccountUpdateDTO;
+import com.fingenie.banking_service.DTO.UserResponseDTO;
+import com.fingenie.banking_service.entity.Account;
+import com.fingenie.banking_service.exception.AccountNotFoundException;
+import com.fingenie.banking_service.repository.AccountRepo;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+@Transactional
+public class AccountServiceImp implements AccountService {
+
+	@Autowired
+	RestTemplate rt;
+
+	@Autowired
+	private HttpServletRequest request;
+
+	@Autowired
+	private AccountRepo accountRepo;
+
+	@Override
+	public Account createAccount(AccountDTO accdto) {
+
+		log.debug("CreateAccount service called for userId: {}", accdto.getUserId());
+
+		UserResponseDTO user = getUser(accdto.getUserId());
+
+		Account account = new Account();
+		account.setUserId(user.getId());
+		account.setAccHolder(user.getName());
+		account.setBalance(0.0);
+		account.setAccType(accdto.getAccType());
+
+		return accountRepo.save(account);
+	}
+
+	@Override
+	public Account getAccountById(Long id) {
+
+		log.debug("GetAccountById service called for id: {}", id);
+
+		return accountRepo.findById(id).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+
+		log.debug("GetAllAccounts service called");
+
+		return accountRepo.findAll();
+	}
+
+	@Override
+	public List<Account> getAccountByUserId(Long userId) {
+
+		log.debug("GetAccountByUserId service called for userId: {}", userId);
+
+		UserResponseDTO user = getUser(userId);
+
+		List<Account> accounts = accountRepo.findByUserId(userId);
+
+		if (accounts.isEmpty()) {
+			throw new AccountNotFoundException("No Accounts not found for user");
+		}
+
+		return accounts;
+	}
+
+	@Override
+	public Account updateAccount(AccountUpdateDTO accdto) {
+
+		log.debug("UpdateAccount service called for accountId: {}", accdto.getAccId());
+
+		Account acc = getAccountById(accdto.getAccId());
+		acc.setAccType(accdto.getAccType());
+
+		return accountRepo.save(acc);
+	}
+
+	@Override
+	public void deleteById(long id) {
+
+		log.debug("DeleteById service called for id: {}", id);
+
+		Account acc = accountRepo.findById(id).orElse(null);
+
+		if (acc == null) {
+			throw new AccountNotFoundException("Account not found for user");
+		}
+
+		accountRepo.deleteById(id);
+	}
+
+	@Override
+	public void deleteByUserID(long userId) {
+
+		log.debug("DeleteByUserID service called for userId: {}", userId);
+
+		accountRepo.deleteByUserId(userId);
+	}
+
+	public UserResponseDTO getUser(Long userId) {
+
+		String authHeader = request.getHeader("Authorization");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", authHeader);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		String url = "http://USER-SERVICE/users/getuserbyid/" + userId;
+
+		ResponseEntity<UserResponseDTO> response = rt.exchange(url, HttpMethod.GET, entity, UserResponseDTO.class);
+
+		return response.getBody();
+	}
+}

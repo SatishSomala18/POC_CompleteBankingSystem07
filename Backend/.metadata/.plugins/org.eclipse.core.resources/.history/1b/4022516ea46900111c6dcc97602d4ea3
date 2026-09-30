@@ -1,0 +1,147 @@
+package com.fingenie.banking_service.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Arrays;
+import java.util.Optional;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.fingenie.banking_service.DTO.AccountDTO;
+import com.fingenie.banking_service.DTO.AccountUpdateDTO;
+import com.fingenie.banking_service.DTO.UserResponseDTO;
+import com.fingenie.banking_service.entity.Account;
+import com.fingenie.banking_service.exception.AccountNotFoundException;
+import com.fingenie.banking_service.repository.AccountRepo;
+
+class AccountServiceImpTest {
+
+    @Mock
+    private RestTemplate rt;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private AccountRepo accountRepo;
+
+    @InjectMocks
+    private AccountServiceImp service;
+
+    private Account account;
+    private UserResponseDTO user;
+    private AccountDTO accountDTO;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+
+        account = new Account();
+        account.setId(1L);
+        account.setUserId(1L);
+        account.setAccHolder("Satish");
+        account.setBalance(0.0);
+        account.setAccType("SAVINGS");
+
+        user = new UserResponseDTO();
+        user.setId(1L);
+        user.setName("Satish");
+
+        accountDTO = new AccountDTO();
+        accountDTO.setUserId(1L);
+        accountDTO.setAccType("SAVINGS");
+    }
+
+    @Test
+    void testCreateAccount() {
+        when(request.getHeader("Authorization")).thenReturn("Bearer token");
+        when(rt.exchange(anyString(), eq(HttpMethod.GET), any(), eq(UserResponseDTO.class)))
+                .thenReturn(ResponseEntity.ok(user));
+        when(accountRepo.save(any(Account.class))).thenReturn(account);
+
+        Account result = service.createAccount(accountDTO);
+
+        assertNotNull(result);
+        assertEquals("Satish", result.getAccHolder());
+    }
+
+    @Test
+    void testGetAccountById_Success() {
+        when(accountRepo.findById(1L)).thenReturn(Optional.of(account));
+
+        Account result = service.getAccountById(1L);
+
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void testGetAccountById_NotFound() {
+        when(accountRepo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(AccountNotFoundException.class, () -> {
+            service.getAccountById(1L);
+        });
+    }
+
+    @Test
+    void testGetAllAccounts() {
+        when(accountRepo.findAll()).thenReturn(Arrays.asList(account));
+
+        var result = service.getAllAccounts();
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetAccountByUserId_Success() {
+        when(request.getHeader("Authorization")).thenReturn("Bearer token");
+        when(rt.exchange(anyString(), eq(HttpMethod.GET), any(), eq(UserResponseDTO.class)))
+                .thenReturn(ResponseEntity.ok(user));
+        when(accountRepo.findByUserId(1L)).thenReturn(Arrays.asList(account));
+
+        var result = service.getAccountByUserId(1L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetAccountByUserId_NotFound() {
+        when(request.getHeader("Authorization")).thenReturn("Bearer token");
+        when(rt.exchange(anyString(), eq(HttpMethod.GET), any(), eq(UserResponseDTO.class)))
+                .thenReturn(ResponseEntity.ok(user));
+        when(accountRepo.findByUserId(1L)).thenReturn(Arrays.asList());
+
+        assertThrows(AccountNotFoundException.class, () -> {
+            service.getAccountByUserId(1L);
+        });
+    }
+
+    @Test
+    void testDeleteById() {
+        when(accountRepo.findById(1L)).thenReturn(Optional.of(account));
+
+        service.deleteById(1L);
+
+        verify(accountRepo, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testDeleteById_NotFound() {
+        when(accountRepo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(AccountNotFoundException.class, () -> {
+            service.deleteById(1L);
+        });
+    }
+}

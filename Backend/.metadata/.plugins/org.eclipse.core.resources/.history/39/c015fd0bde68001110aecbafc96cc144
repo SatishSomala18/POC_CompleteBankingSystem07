@@ -1,0 +1,19 @@
+package com.fingenie.wealth_service.service;
+
+import java.util.List;
+
+import com.fingenie.wealth_service.dto.LoanRequestDTO;
+import com.fingenie.wealth_service.dto.LoanResponseDTO;
+
+public interface ILoanService {
+
+    LoanResponseDTO applyLoan(LoanRequestDTO dto);
+    List<LoanResponseDTO> getAllLoans();
+    LoanResponseDTO approveLoan(Long loanId);
+    LoanResponseDTO rejectLoan(Long loanId);
+    LoanResponseDTO updateLoan(Long loanId, LoanRequestDTO dto);
+    LoanResponseDTO findById(Long loanId);
+    List<LoanResponseDTO> findByUserId(Long loanId);
+	void deleteById(Long loanId);
+    List<LoanResponseDTO> findByStatus(String status);
+}

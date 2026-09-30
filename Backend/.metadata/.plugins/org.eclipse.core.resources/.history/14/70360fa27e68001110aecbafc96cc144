@@ -1,0 +1,61 @@
+package com.fingenie.banking_service.DTO;
+
+
+
+
+public class AccountUpdateDTO {
+
+	private long accId;
+	private String accType;
+	
+	
+	
+	public AccountUpdateDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public AccountUpdateDTO(long accId, String accType) {
+		super();
+		this.accId = accId;
+		this.accType = accType;
+	}
+
+
+
+	public long getAccId() {
+		return accId;
+	}
+
+
+
+	public void setAccId(long accId) {
+		this.accId = accId;
+	}
+
+
+
+	public String getAccType() {
+		return accType;
+	}
+
+
+
+	public void setAccType(String accType) {
+		this.accType = accType;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "AccountUpdateDTO [accId=" + accId + ", accType=" + accType + "]";
+	}
+
+
+	
+	
+
+}

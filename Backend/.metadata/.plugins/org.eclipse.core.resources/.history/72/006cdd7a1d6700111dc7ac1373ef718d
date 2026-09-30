@@ -1,0 +1,58 @@
+package com.fingenie.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.service.IUserService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/users")
+public class UserRestController {
+
+    @Autowired
+    private IUserService userService;
+
+   
+    @PostMapping("/")
+    public UserResponseDTO addUser(@Valid @RequestBody UserDTO userDTO) {
+        return userService.addUser(userDTO);
+    }
+
+    
+    @PutMapping("/{id}")
+    public UserResponseDTO updateUser(@Valid @RequestBody UserDTO userDTO,
+                                      @PathVariable Long id) {
+        return userService.updateUser(userDTO, id);
+    }
+
+   
+    @GetMapping("/{id}")
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    
+    @GetMapping
+    public List<UserResponseDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUserById(id);
+        return "User deleted successfully";
+    }
+
+    
+    @GetMapping("/role/{role}")
+    public List<UserResponseDTO> getUsersByRole(@PathVariable String role) {
+        return userService.getUsersByRole(role);
+    }
+}

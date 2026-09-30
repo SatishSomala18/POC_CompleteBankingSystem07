@@ -1,0 +1,13 @@
+package com.fingenie.user_service.dto;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UserDTO {
+	private String name;
+	private String email;
+	private String roles;
+	private String phone;
+}

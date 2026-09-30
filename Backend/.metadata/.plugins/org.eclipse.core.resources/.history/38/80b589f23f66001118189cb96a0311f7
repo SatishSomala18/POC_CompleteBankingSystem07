@@ -1,0 +1,18 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+
+public interface IUserService {
+	public UserResponseDTO addUser(UserDTO usedto);
+	public UserResponseDTO updateUser(UserDTO usedto,Long id);
+	public UserResponseDTO getUserById(Long id);
+	public List<UserResponseDTO> getAllUsers();
+	public void deleteUserById(Long id);
+	
+	public List<UserResponseDTO> getUsersByRole(String role);
+	
+	
+}

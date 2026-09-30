@@ -1,0 +1,52 @@
+package com.fingenie.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.fingenie.user_service.dto.CreditProfileDTO;
+import com.fingenie.user_service.dto.CreditProfileResponseDTO;
+import com.fingenie.user_service.service.ICreditProfileService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/credit-profiles")
+public class CreditProfileRestController {
+
+    @Autowired
+    private ICreditProfileService service;
+
+    @PostMapping("/addprofile")
+    public CreditProfileResponseDTO addProfile(@Valid @RequestBody CreditProfileDTO dto) {
+        return service.addProfile(dto);
+    }
+
+    @PutMapping("/updateprofile/{id}")
+    public CreditProfileResponseDTO updateProfile(@Valid @RequestBody CreditProfileDTO dto,
+                                                  @PathVariable Long id) {
+        return service.updateProfile(dto, id);
+    }
+
+    @GetMapping("getprofilebyid/{id}")
+    public CreditProfileResponseDTO getProfileById(@PathVariable Long id) {
+        return service.getProfileById(id);
+    }
+
+    @GetMapping("/getallprofiles")
+    public List<CreditProfileResponseDTO> getAllProfiles() {
+        return service.getAllProfiles();
+    }
+
+    @DeleteMapping("deleteprofilebyid/{id}")
+    public String deleteProfile(@PathVariable Long id) {
+        service.deleteProfileById(id);
+        return "Credit profile deleted successfully";
+    }
+
+    @GetMapping("/getprofilebyuserid/{id}")
+    public List<CreditProfileResponseDTO> getProfilesByUserId(@PathVariable Long id) {
+        return service.getProfilesByUserId(id);
+    }
+}

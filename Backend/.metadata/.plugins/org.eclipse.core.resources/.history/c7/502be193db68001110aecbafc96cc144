@@ -1,0 +1,94 @@
+package com.fingenie.wealth_service.dto;
+
+public class LoanResponseDTO {
+
+    private Long loanId;
+    private Long userId;
+    private Long accountId; 
+    private Double amount;
+    private int tenureMonths;
+    private Double emi;
+    private String status;
+	
+    public LoanResponseDTO(){
+    	
+    }
+
+	public LoanResponseDTO(Long loanId, Long userId, Long accountId, Double amount, int tenureMonths, Double emi,
+			String status) {
+		super();
+		this.loanId = loanId;
+		this.userId = userId;
+		this.accountId = accountId;
+		this.amount = amount;
+		this.tenureMonths = tenureMonths;
+		this.emi = emi;
+		this.status = status;
+	}
+
+	public Long getLoanId() {
+		return loanId;
+	}
+
+	public void setLoanId(Long loanId) {
+		this.loanId = loanId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public int getTenureMonths() {
+		return tenureMonths;
+	}
+
+	public void setTenureMonths(int tenureMonths) {
+		this.tenureMonths = tenureMonths;
+	}
+
+	public Double getEmi() {
+		return emi;
+	}
+
+	public void setEmi(Double emi) {
+		this.emi = emi;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "LoanResponseDTO [loanId=" + loanId + ", userId=" + userId + ", accountId=" + accountId + ", amount="
+				+ amount + ", tenureMonths=" + tenureMonths + ", emi=" + emi + ", status=" + status + "]";
+	}
+    
+	
+	
+
+}

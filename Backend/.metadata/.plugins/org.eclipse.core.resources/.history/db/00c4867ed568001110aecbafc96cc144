@@ -1,0 +1,89 @@
+package com.fingenie.wealth_service.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.wealth_service.dto.UserInvestmentRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentResponseDTO;
+import com.fingenie.wealth_service.entity.UserInvestment;
+import com.fingenie.wealth_service.service.IUserInvestmentService;
+
+@RestController
+@RequestMapping("/userinvestments")
+public class UserInvestmentController {
+
+    private final IUserInvestmentService service;
+
+    public UserInvestmentController(IUserInvestmentService service) {
+        this.service = service;
+    }
+
+    @PostMapping("/adduserinvestment")
+    public Map<String, Object> addUserInvestment(@RequestBody UserInvestmentRequestDTO dto) {
+
+        UserInvestmentResponseDTO saved = service.addUserInvestment(dto);
+        return Map.of(
+                "message", "User investment added successfully",
+                "data", saved);
+    }
+
+    @GetMapping("/getuserinvestmentsbyuserid/{userId}")
+    public List<UserInvestment> getByUserId(@PathVariable Long userId) {
+        return service.getUserInvestmentByUserId(userId);
+    }
+
+    @GetMapping("/getuserinvestmentsbyinvestmentid/{investmentId}")
+    public List<UserInvestment> getByInvestmentId(@PathVariable Long investmentId) {
+        return service.getUserInvestmentByInvestmentId(investmentId);
+    }
+
+    @GetMapping("/getuserinvestmentbyid/{id}")
+    public UserInvestment getById(@PathVariable Long id) {
+        return service.getUserInvestmentById(id);
+    }
+
+    @GetMapping("/getalluserinvestments")
+    public List<UserInvestment> getAll() {
+        return service.getAllUserInvestment();
+    }
+
+    @PutMapping("/updateuserinvestment/{id}")
+    public Map<String, Object> update(@PathVariable Long id,
+                                     @RequestBody UserInvestmentRequestDTO dto) {
+
+        UserInvestment updated = service.updateUserInvestment(id, dto);
+        return Map.of(
+                "message", "User investment updated successfully",
+                "data", updated);
+    }
+
+    @DeleteMapping("/deleteuserinvestmentbyid/{userinvestmentid}")
+    public Map<String, Object> closeInvestmentById(@PathVariable Long userinvestmentid) {
+
+
+        service.closeInvestmentById(userinvestmentid);
+        return Map.of(
+                "message", "Investment closed successfully by id");
+    }
+    
+    
+    @DeleteMapping("/deleteuserinvestmentbyinvestmentid/{investmentid}")
+    public Map<String, Object> closeInvestmentByInvestmentId(@PathVariable Long investmentid) {
+
+
+        service.closeInvestmentByInvestmentId(investmentid);
+        return Map.of(
+                "message", "Investment closed successfully by Investment id");
+    }
+    
+    
+}

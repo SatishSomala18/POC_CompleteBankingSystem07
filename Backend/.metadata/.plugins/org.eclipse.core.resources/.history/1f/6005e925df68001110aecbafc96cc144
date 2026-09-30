@@ -1,0 +1,73 @@
+package com.fingenie.wealth_service.dto;
+
+public class Account {
+	private Long id;
+
+	private String accHolder;
+
+	private Long userId;
+
+	private Double balance;
+
+	private String accType;
+
+	public Account() {
+
+	}
+
+	public Account(Long id, String accHolder, Long userId, Double balance, String accType) {
+		super();
+		this.id = id;
+		this.accHolder = accHolder;
+		this.userId = userId;
+		this.balance = balance;
+		this.accType = accType;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getAccHolder() {
+		return accHolder;
+	}
+
+	public void setAccHolder(String accHolder) {
+		this.accHolder = accHolder;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public Double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public String getAccType() {
+		return accType;
+	}
+
+	public void setAccType(String accType) {
+		this.accType = accType;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", accHolder=" + accHolder + ", userId=" + userId + ", balance=" + balance
+				+ ", accType=" + accType + "]";
+	}
+
+}

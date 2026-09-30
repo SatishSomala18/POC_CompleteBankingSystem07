@@ -1,0 +1,46 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+
+public class UserServiceImp implements IUserService {
+
+	@Override
+	public UserResponseDTO addUser(UserDTO usedto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserResponseDTO updateUser(UserDTO usedto, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserResponseDTO getUserById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserResponseDTO> getAllUsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<UserResponseDTO> getUsersByRole(String role) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

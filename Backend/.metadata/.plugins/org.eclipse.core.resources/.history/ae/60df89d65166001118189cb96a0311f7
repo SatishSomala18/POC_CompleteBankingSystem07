@@ -1,0 +1,5 @@
+package com.fingenie.user_service.service;
+
+public interface IUserSecurityService {
+
+}

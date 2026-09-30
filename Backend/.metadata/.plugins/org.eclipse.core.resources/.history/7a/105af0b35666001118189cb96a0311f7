@@ -1,0 +1,92 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fingenie.user_service.dto.UserSecurityDTO;
+import com.fingenie.user_service.dto.UserSecurityResponseDTO;
+import com.fingenie.user_service.entity.User;
+import com.fingenie.user_service.entity.UserSecurity;
+import com.fingenie.user_service.repository.UserRepository;
+import com.fingenie.user_service.repository.UserSecurityRepository;
+
+public class UserSecurityServiceImp implements IUserSecurityService {
+	
+	@Autowired
+	UserSecurityRepository repo;
+	
+	@Autowired
+	
+	UserRepository userrepo;
+
+	@Override
+	public UserSecurityResponseDTO addUserSecurity(UserSecurityDTO dto) {
+		UserSecurity user=convertToEntity(dto);
+		return convertToDTO(repo.save(user));
+	}
+
+	@Override
+	public UserSecurityResponseDTO updateUserSecurity(UserSecurityDTO dto, Long id) {
+		UserSecurity user=repo.findById(id).orElse(null);
+		if(user==null) {
+			//throw new UserSecurityNotFoundException("User Not Found With ID :" + id);
+		}
+		user=convertToEntity(dto);
+		user.setId(id);
+		return convertToDTO(repo.save(user));
+	}
+
+	@Override
+	public UserSecurityResponseDTO getUserSecurityById(Long id) {
+		UserSecurity user=repo.findById(id).orElse(null);
+		if(user==null) {
+			//throw new UserSecurityNotFoundException("User Not Found With ID :" + id);
+		}
+		return convertToDTO(user);
+		
+	}
+
+	@Override
+	public void deleteUserSecurityById(Long id) {
+		// TODO Auto-generated method stub
+		repo.deleteById(id);
+		
+	}
+
+	@Override
+	public List<UserSecurityResponseDTO> getAllUserSecurities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public UserSecurity convertToEntity(UserSecurityDTO dto) {
+		UserSecurity user=new UserSecurity();
+		user.setOtp(dto.getOtp());
+		user.setExpiryTime(dto.getExpiryTime());
+		
+		User u=userrepo.findById(dto.getUserId()).orElse(null);
+		if(u==null) {
+			//throw new UserNotFoundException("User Not Found With ID :" + id);
+		}
+		
+		user.setUser(u);
+		
+		return  user;
+	}
+	
+	public UserSecurityResponseDTO convertToDTO(UserSecurity user) {
+		UserSecurityResponseDTO usersecurity=new UserSecurityResponseDTO();
+		usersecurity.setId(user.getId());
+		usersecurity.setOtp(user.getOtp());
+		usersecurity.setExpiryTime(user.getExpiryTime());
+		usersecurity.setUserId(user.getUser().getId());
+		
+		
+		return usersecurity;
+		
+	}
+
+	
+
+}

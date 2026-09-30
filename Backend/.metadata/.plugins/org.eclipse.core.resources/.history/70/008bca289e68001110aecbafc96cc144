@@ -1,0 +1,95 @@
+package com.fingenie.banking_service.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.banking_service.DTO.DepositRequestDTO;
+import com.fingenie.banking_service.DTO.TransferDTO;
+import com.fingenie.banking_service.DTO.WithdrawRequestDTO;
+import com.fingenie.banking_service.entity.Transaction;
+import com.fingenie.banking_service.service.TransactionServiceImp;
+
+@RestController
+@RequestMapping("/transaction")
+public class TransactionRestController {
+	
+	@Autowired
+	TransactionServiceImp tsi;
+	
+	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PostMapping("/deposit")
+	public Transaction deposit(@RequestBody DepositRequestDTO dto) {
+		
+		return tsi.deposit(dto);
+		
+	}
+	
+	
+
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PostMapping("/withdraw")
+    public Transaction withdraw(@RequestBody WithdrawRequestDTO dto) {
+		
+		return tsi.withdraw(dto);
+		
+		
+    	
+    }
+
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PostMapping("/transfer")
+    public Transaction transfer(@RequestBody TransferDTO dto) {
+		
+		return tsi.transfer(dto);
+    	
+    }
+	
+	
+	
+	@GetMapping("/gettransactionbyid/{id}")
+	
+	public Transaction getAccountById(@PathVariable Long id) {
+		
+		return tsi.getTransactionById(id);
+		
+	}
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/getalltransactions")
+	public List<Transaction> getAllTransactions() {
+
+	    return tsi.getAllTransactions();
+
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("/accounttransactions/{accountId}")
+	public List<Transaction> getTransactionsByAccountId(
+	        @PathVariable Long accountId) {
+
+	    return tsi.getTransactionsByAccountId(accountId);
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("gettransactionsbetweenaccounts/from/{fromAccountId}/to/{toAccountId}")
+	public List<Transaction> getTransactionsBetweenAccounts(
+	        @PathVariable Long fromAccountId,
+	        @PathVariable Long toAccountId) {
+
+	    return tsi.getTransactionsBetweenAccounts(
+	            fromAccountId,
+	            toAccountId);
+	}
+	
+	
+
+
+}

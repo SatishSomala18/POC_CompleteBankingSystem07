@@ -1,0 +1,5 @@
+package com.fingenie.user_service.exceptions;
+
+public class GlobalExceptionHandler {
+
+}

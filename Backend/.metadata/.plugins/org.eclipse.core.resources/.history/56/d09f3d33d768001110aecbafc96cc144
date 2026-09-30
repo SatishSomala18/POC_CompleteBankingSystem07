@@ -1,0 +1,27 @@
+package com.fingenie.wealth_service.dto;
+
+public class LoanResponseDTO {
+
+    private Long loanId;
+    private Double emi;
+    private String status;
+	public Long getLoanId() {
+		return loanId;
+	}
+	public void setLoanId(Long loanId) {
+		this.loanId = loanId;
+	}
+	public Double getEmi() {
+		return emi;
+	}
+	public void setEmi(Double emi) {
+		this.emi = emi;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+}

@@ -1,0 +1,9 @@
+package com.fingenie.user_service.service;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+
+public class UserSecurityServiceImp {
+	
+
+}

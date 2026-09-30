@@ -1,0 +1,150 @@
+package com.fingenie.wealth_service.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.fingenie.wealth_service.dto.LoanRequestDTO;
+import com.fingenie.wealth_service.entity.Loan;
+import com.fingenie.wealth_service.repository.LoanRepository;
+
+@Service
+public class LoanServiceImp implements ILoanService {
+
+    private final LoanRepository loanRepository;
+    private final EMICalculatorService emiService;
+
+    public LoanServiceImp(LoanRepository loanRepository, EMICalculatorService emiService) {
+        this.loanRepository = loanRepository;
+        this.emiService = emiService;
+    }
+    
+    @Override
+    public Loan applyLoan(LoanRequestDTO dto) {
+
+
+        if (dto.getAmount() <= 0) {
+            throw new RuntimeException("Loan amount must be greater than 0");
+        }
+
+        if (dto.getTenureMonths() <= 0) {
+            throw new RuntimeException("Tenure must be greater than 0");
+        }
+ 	
+        Loan loan = new Loan();
+        loan.setUserId(dto.getUserId());
+        loan.setAmount(dto.getAmount());
+        loan.setTenureMonths(dto.getTenureMonths());
+
+        loan.setStatus("PENDING");
+
+        double emi = dto.getAmount() / dto.getTenureMonths();
+        loan.setEmi(emi);
+
+        return loanRepository.save(loan);
+    }
+
+	@Override
+	public List<Loan> getAllLoans() {
+		return loanRepository.findAll();
+	}
+	
+	@Override
+	public Loan approveLoan(Long loanId) {
+
+	    Loan loan = loanRepository.findById(loanId)
+	            .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+	    if ("APPROVED".equals(loan.getStatus())) {
+	        throw new RuntimeException("Loan is already approved");
+	    }
+
+	    if ("REJECTED".equals(loan.getStatus())) {
+	        throw new RuntimeException("Rejected loan cannot be approved");
+	    }
+
+	    loan.setStatus("APPROVED");
+
+	    return loanRepository.save(loan);
+	}
+
+
+	@Override
+	public Loan rejectLoan(Long loanId) {
+
+	    Loan loan = loanRepository.findById(loanId)
+	            .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+	    if ("REJECTED".equals(loan.getStatus())) {
+	        throw new RuntimeException("Loan is already rejected");
+	    }
+
+	    if ("APPROVED".equals(loan.getStatus())) {
+	        throw new RuntimeException("Approved loan cannot be rejected");
+	    }
+
+	    loan.setStatus("REJECTED");
+
+	    return loanRepository.save(loan);
+	}
+	
+
+	@Override
+	public Loan updateLoan(Long loanId, LoanRequestDTO dto) {
+
+	    if (loanId == null) {
+	        throw new RuntimeException("Loan ID cannot be null");
+	    }
+
+	    Loan existingLoan = loanRepository.findById(loanId)
+	            .orElseThrow(() -> new RuntimeException(
+	                    "Loan not found with ID: " + loanId));
+
+	    if (dto.getAmount() <= 0) {
+	        throw new RuntimeException("Loan amount must be greater than 0");
+	    }
+
+	    if (dto.getTenureMonths() <= 0) {
+	        throw new RuntimeException("Tenure must be greater than 0");
+	    }
+
+	    existingLoan.setAmount(dto.getAmount());
+	    existingLoan.setTenureMonths(dto.getTenureMonths());
+
+	    double emi = dto.getAmount() / dto.getTenureMonths();
+	    existingLoan.setEmi(emi);
+
+	    return loanRepository.save(existingLoan);
+	}
+	
+	@Override
+	public void deleteById(Long id) {
+
+	    if (!loanRepository.existsById(id)) {
+	        throw new RuntimeException("Loan not found with ID: " + id);
+	    }
+
+	    loanRepository.deleteById(id);
+	}
+	
+	@Override
+	public Loan findById(Long id) {
+
+	    if (id == null) {
+	        throw new RuntimeException("Loan ID cannot be null");
+	    }
+
+	    return loanRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + id));
+	}
+
+	public EMICalculatorService getEmiService() {
+		return emiService;
+	}
+
+	@Override
+	public List<Loan> findByStatus(String status) {
+		
+		return loanRepository.findByStatus(status);
+	}
+}

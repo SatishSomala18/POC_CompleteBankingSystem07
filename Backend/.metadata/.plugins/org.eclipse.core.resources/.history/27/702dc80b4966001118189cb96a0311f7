@@ -1,0 +1,15 @@
+package com.fingenie.user_service.dto;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Data
+@NoArgsConstructor
+public class CreditProfileResponseDTO {
+	private int id;
+	private int creditScore;
+    private double monthlyIncome;
+    private Long userId; 
+	
+}

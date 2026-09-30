@@ -1,0 +1,102 @@
+package com.fingenie.user_service.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.entity.User;
+import com.fingenie.user_service.exceptions.UserNotFoundException;
+import com.fingenie.user_service.repository.UserRepository;
+
+public class UserServiceImp implements IUserService {
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	UserRepository repo;
+	@Override
+	public UserResponseDTO addUser(UserDTO userdto) {
+     User user=repo.save(convertToEntity(userdto));
+     return convertToDTO(user);
+	}
+
+	@Override
+	public UserResponseDTO updateUser(UserDTO userdto, Long id) {
+		User u = repo.findById(id).orElse(null);
+		if (u == null) {
+			throw new UserNotFoundException("User Not Found With ID :" + id);
+		}
+		u=convertToEntity(userdto);
+		u.setId(id);
+		User user=repo.save(u);
+	    return convertToDTO(user);
+	}
+
+	@Override
+	public UserResponseDTO getUserById(Long id) {
+		User u = repo.findById(id).orElse(null);
+		if (u == null) {
+			throw new UserNotFoundException("User Not Found With ID :" + id);
+		}
+		return convertToDTO(u);
+	}
+
+	@Override
+	public List<UserResponseDTO> getAllUsers() {
+		List<User> allUsers=repo.findAll();
+		List<UserResponseDTO> result=new ArrayList<>();
+		for(User user:allUsers) {
+			result.add(convertToDTO(user));
+		}
+		return result;
+	}
+
+	@Override
+	public void deleteUserById(Long id) {
+		User user=repo.findById(id).orElse(null);
+		if (user == null) {
+			throw new UserNotFoundException("User Not Found With ID :" + id);
+		}
+		repo.deleteById(id);
+		
+		
+	}
+
+	@Override
+	public List<UserResponseDTO> getUsersByRole(String role) {
+		List<User> allUsers=repo.findByRoles(role);
+		List<UserResponseDTO> result=new ArrayList<>();
+		for(User user:allUsers) {
+			result.add(convertToDTO(user));
+		}
+		return result;
+	}
+	
+	public User convertToEntity(UserDTO userdto){
+		User user=new User();
+		user.setEmail(userdto.getEmail());
+		user.setName(userdto.getName());
+		user.setPassword(passwordEncoder.encode(userdto.getPassword()));
+		user.setPhone(userdto.getPhone());
+		user.setRoles(userdto.getRoles());
+		return user;
+	}
+	
+	public UserResponseDTO convertToDTO(User user){
+		UserResponseDTO response=new UserResponseDTO();
+		response.setId(user.getId());
+		response.setPhone(user.getPhone());
+		response.setName(user.getName());
+		response.setRoles(user.getRoles());
+		response.setEmail(user.getEmail());
+		return response;
+	}
+	
+	
+
+}

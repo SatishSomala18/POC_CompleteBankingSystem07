@@ -1,0 +1,20 @@
+package com.fingenie.wealth_service.dto;
+
+public class LoanResponseDTO {
+
+	private Long loanId;
+	private Long userId;
+	private Long accountId;
+	private String name;
+	private int creditScore;
+	private Double amount;
+	private int tenureMonths;
+	private Double emi;
+	private String status;
+
+	public LoanResponseDTO() {
+
+	}
+
+	
+}

@@ -1,0 +1,5 @@
+package com.fingenie.api_gateway.filter;
+
+public class JwtFilter {
+
+}

@@ -1,0 +1,19 @@
+package com.fingenie.wealth_service.service;
+
+import java.util.List;
+
+import com.fingenie.wealth_service.dto.UserInvestmentRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentResponseDTO;
+import com.fingenie.wealth_service.entity.UserInvestment;
+
+public interface IUserInvestmentService {
+	
+	UserInvestmentResponseDTO addUserInvestment(UserInvestmentRequestDTO dto);
+    List<UserInvestment> getUserInvestmentByUserId(Long userId);
+    List<UserInvestment> getUserInvestmentByInvestmentId(Long investmentId);
+    UserInvestment getUserInvestmentById(Long Id);    
+    List<UserInvestment> getAllUserInvestment();
+    UserInvestment closeInvestmentById(Long id);
+    UserInvestment closeInvestmentByInvestmentId(Long id);
+    UserInvestment updateUserInvestment(Long id, UserInvestmentRequestDTO dto);     
+}

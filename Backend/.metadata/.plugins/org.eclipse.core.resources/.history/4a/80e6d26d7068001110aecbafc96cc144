@@ -1,0 +1,139 @@
+package com.fingenie.wealth_service.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.fingenie.wealth_service.dto.InvestmentDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentResponseDTO;
+import com.fingenie.wealth_service.entity.Investment;
+import com.fingenie.wealth_service.entity.UserInvestment;
+import com.fingenie.wealth_service.repository.InvestmentRepository;
+import com.fingenie.wealth_service.repository.UserInvestmentRepository;
+
+@Service
+public class InvestmentServiceImp implements IInvestmentService {
+
+    private final InvestmentRepository investmentRepo;
+    private final UserInvestmentRepository userInvestmentRepo;
+
+    public InvestmentServiceImp(InvestmentRepository investmentRepo,
+                                 UserInvestmentRepository userInvestmentRepo) {
+        this.investmentRepo = investmentRepo;
+        this.userInvestmentRepo = userInvestmentRepo;
+    }
+
+    @Override
+    public UserInvestmentResponseDTO invest(UserInvestmentRequestDTO dto) {
+
+        if (dto.getAmount() <= 0) {
+            throw new RuntimeException("Investment amount must be greater than 0");
+        }
+
+        Investment investment = investmentRepo.findById(dto.getInvestmentId())
+                .orElseThrow(() -> new RuntimeException("Investment not found"));
+
+        UserInvestment entity = new UserInvestment(
+                dto.getUserId(),
+                dto.getAmount(),
+                investment
+        );
+
+        UserInvestment saved = userInvestmentRepo.save(entity);
+
+        return convertToResponseDTO(saved);
+    }
+
+ 
+
+	@Override
+	public Investment closeInvestment(Long id) {
+	    if (!investmentRepo.existsById(id)) {
+	        throw new RuntimeException("Investment not found with ID: " + id);
+	    }
+
+	    investmentRepo.deleteById(id);
+	}
+
+
+	
+	@Override
+	public List<UserInvestmentResponseDTO> getUserInvestments(Long userId) {
+		
+		
+
+	    List<UserInvestment> list = userInvestmentRepo.findByUserId(userId);
+
+	    return list.stream()
+	            .map(this::convertToResponseDTO)
+	            .toList();
+	}
+
+	@Override
+	public Investment save(Investment investment){
+
+	    if (investment.getType() == null || investment.getType().isEmpty()) {
+	        throw new RuntimeException("Investment type cannot be empty");
+	    }
+
+	    return investmentRepo.save(investment);
+	}
+
+	@Override
+	public Investment getInvestmentById(Long id){
+		// TODO Auto-generated method stub
+		return investmentRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("Investment not found"));
+	}
+	
+	@Override
+	public List<UserInvestmentResponseDTO> getAllUserInvestments() {
+
+	    List<UserInvestment> list = userInvestmentRepo.findAll();
+
+	    return list.stream()
+	            .map(this::convertToResponseDTO)
+	            .toList();
+	}
+
+	@Override
+	public void deletInvestmentById(Long id) {
+
+	    if (!investmentRepo.existsById(id)) {
+	        throw new RuntimeException("Investment not found with ID: " + id);
+	    }
+
+	    investmentRepo.deleteById(id);
+	}
+
+	
+
+	@Override
+	public List<Investment> getAllInvestments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Investment updateInvestment(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	   private UserInvestmentResponseDTO convertToResponseDTO(UserInvestment entity) {
+
+	        UserInvestmentResponseDTO dto = new UserInvestmentResponseDTO();
+
+	        dto.setUserId(entity.getUserId());
+	        dto.setInvestmentId(entity.getInvestment().getId());
+	        dto.setInvestmentType(entity.getInvestment().getType());
+	        dto.setRiskLevel(entity.getInvestment().getRiskLevel());
+	        dto.setAmount(entity.getAmount());
+
+	        return dto;
+	    }
+
+}

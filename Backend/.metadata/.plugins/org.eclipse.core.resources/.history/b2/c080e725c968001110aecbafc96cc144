@@ -1,0 +1,5 @@
+package com.fingenie.wealth_service.security;
+
+public class JwtFilter {
+
+}

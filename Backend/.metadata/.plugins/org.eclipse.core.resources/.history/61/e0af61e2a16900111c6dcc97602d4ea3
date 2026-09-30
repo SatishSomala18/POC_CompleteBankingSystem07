@@ -1,0 +1,132 @@
+package com.fingenie.user_service.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+import java.util.Arrays;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.entity.User;
+import com.fingenie.user_service.exceptions.UserNotFoundException;
+import com.fingenie.user_service.repository.UserRepository;
+
+class UserServiceImpTest {
+
+    @Mock
+    private UserRepository repo;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @InjectMocks
+    private UserServiceImp service;
+
+    private User user;
+    private UserDTO userDTO;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+
+        user = new User();
+        user.setId(1L);
+        user.setName("Satish");
+        user.setEmail("satish@test.com");
+        user.setPassword("encoded123");
+        user.setPhone("1234567890");
+        user.setRoles("USER");
+
+        userDTO = new UserDTO();
+        userDTO.setName("Satish");
+        userDTO.setEmail("satish@test.com");
+        userDTO.setPassword("pass123");
+        userDTO.setPhone("1234567890");
+        userDTO.setRoles("USER");
+    }
+
+    
+    @Test
+    void testAddUser() {
+        when(passwordEncoder.encode(anyString())).thenReturn("encoded123");
+        when(repo.save(any(User.class))).thenReturn(user);
+
+        UserResponseDTO result = service.addUser(userDTO);
+
+        assertNotNull(result);
+        assertEquals("Satish", result.getName());
+        verify(repo, times(1)).save(any(User.class));
+    }
+
+   
+    @Test
+    void testGetUserById_Success() {
+        when(repo.findById(1L)).thenReturn(Optional.of(user));
+
+        UserResponseDTO result = service.getUserById(1L);
+
+        assertEquals("Satish", result.getName());
+    }
+
+
+    @Test
+    void testGetUserById_NotFound() {
+        when(repo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> {
+            service.getUserById(1L);
+        });
+    }
+
+    // ✅ getAllUsers
+    @Test
+    void testGetAllUsers() {
+        when(repo.findAll()).thenReturn(Arrays.asList(user));
+
+        var result = service.getAllUsers();
+
+        assertEquals(1, result.size());
+    }
+
+
+    @Test
+    void testDeleteUser() {
+        when(repo.findById(1L)).thenReturn(Optional.of(user));
+
+        service.deleteUserById(1L);
+
+        verify(repo, times(1)).deleteById(1L);
+    }
+
+  
+    @Test
+    void testUpdateUser_Success() {
+        when(repo.findById(1L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(repo.save(any(User.class))).thenReturn(user);
+
+        UserResponseDTO result = service.updateUser(userDTO, 1L);
+
+        assertNotNull(result);
+        verify(repo).save(any(User.class));
+    }
+
+    
+    @Test
+    void testUpdateUser_WrongPassword() {
+        when(repo.findById(1L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+        assertThrows(Exception.class, () -> {
+            service.updateUser(userDTO, 1L);
+        });
+    }
+}

@@ -1,0 +1,43 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.dto.UserSecurityDTO;
+import com.fingenie.user_service.dto.UserSecurityResponseDTO;
+
+public class UserSecurityServiceImp implements IUserSecurityService {
+
+	@Override
+	public UserSecurityResponseDTO addUserSecurity(UserSecurityDTO dto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserSecurityResponseDTO updateUserSecurity(UserSecurityDTO dto, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserSecurityResponseDTO getUserSecurityById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteUserSecurityById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<UserSecurityResponseDTO> getAllUserSecurities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

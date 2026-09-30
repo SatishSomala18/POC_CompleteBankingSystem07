@@ -1,0 +1,9 @@
+{
+  "short_name": "NexaBank",
+  "name": "NexaBank - Modern Digital Banking",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

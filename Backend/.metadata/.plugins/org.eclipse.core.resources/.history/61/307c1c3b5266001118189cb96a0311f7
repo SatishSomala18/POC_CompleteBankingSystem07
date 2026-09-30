@@ -1,0 +1,47 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fingenie.user_service.dto.UserSecurityDTO;
+import com.fingenie.user_service.dto.UserSecurityResponseDTO;
+import com.fingenie.user_service.repository.UserSecurityRepository;
+
+public class UserSecurityServiceImp implements IUserSecurityService {
+	
+	@Autowired
+	UserSecurityRepository repo;
+
+	@Override
+	public UserSecurityResponseDTO addUserSecurity(UserSecurityDTO dto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserSecurityResponseDTO updateUserSecurity(UserSecurityDTO dto, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserSecurityResponseDTO getUserSecurityById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteUserSecurityById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<UserSecurityResponseDTO> getAllUserSecurities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

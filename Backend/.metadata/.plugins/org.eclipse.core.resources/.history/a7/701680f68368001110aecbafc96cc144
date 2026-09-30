@@ -1,0 +1,5 @@
+package com.fingenie.banking_service.config;
+
+public class SecurityConfig {
+
+}

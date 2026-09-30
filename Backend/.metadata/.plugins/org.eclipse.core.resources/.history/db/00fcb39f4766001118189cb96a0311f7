@@ -1,0 +1,46 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import com.fingenie.user_service.dto.CreditProfileDTO;
+import com.fingenie.user_service.dto.CreditProfileResponseDTO;
+
+public class CreditProfileServiceImp implements ICreditProfileService{
+
+	@Override
+	public CreditProfileResponseDTO addProfile(CreditProfileDTO profile) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CreditProfileResponseDTO updateProfile(CreditProfileDTO profile, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CreditProfileResponseDTO getProfileById(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CreditProfileResponseDTO> getAllProfiles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteProfileById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<CreditProfileResponseDTO> getProfileByUserId(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

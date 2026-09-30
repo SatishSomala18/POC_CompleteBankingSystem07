@@ -1,0 +1,68 @@
+package com.fingenie.wealth_service.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.wealth_service.dto.InvestmentDTO;
+import com.fingenie.wealth_service.entity.Investment;
+import com.fingenie.wealth_service.service.IInvestmentService;
+
+@RestController
+@RequestMapping("/investments")
+public class InvestmentController {
+
+	private final IInvestmentService investmentService;
+
+	public InvestmentController(IInvestmentService investmentService) {
+		this.investmentService = investmentService;
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/addinvestment")
+	public Investment addInvestment(@RequestBody InvestmentDTO dto) {
+
+		Investment saved = investmentService.addInvestment(dto);
+		return saved;
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+
+	@PutMapping("/updateinvestment/{id}")
+	public Investment updateInvestment(@RequestBody InvestmentDTO dto, @PathVariable Long id) {
+
+		Investment updated = investmentService.updateInvestment(dto, id);
+		return updated;
+	}
+
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+
+	@GetMapping("/getinvestmentbyid/{id}")
+	public Investment getInvestmentById(@PathVariable Long id) {
+		return investmentService.getInvestmentById(id);
+	}
+
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@GetMapping("/getallinvestments")
+	public List<Investment> getAllInvestments() {
+		return investmentService.getAllInvestments();
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping("/deleteinvestmentbyid/{id}")
+	public String closeInvestment(@PathVariable Long id) {
+
+		String message = investmentService.closeInvestmentById(id);
+		return message;
+	}
+
+}

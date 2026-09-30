@@ -1,0 +1,85 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fingenie.user_service.dto.CreditProfileDTO;
+import com.fingenie.user_service.dto.CreditProfileResponseDTO;
+import com.fingenie.user_service.entity.CreditProfile;
+import com.fingenie.user_service.entity.User;
+import com.fingenie.user_service.repository.CreditProfileRepository;
+import com.fingenie.user_service.repository.UserRepository;
+
+public class CreditProfileServiceImp implements ICreditProfileService{
+	
+	@Autowired
+	
+	CreditProfileRepository repo;
+	
+	@Autowired
+	UserRepository userrepo;
+
+	@Override
+	public CreditProfileResponseDTO addProfile(CreditProfileDTO profile) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CreditProfileResponseDTO updateProfile(CreditProfileDTO profile, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CreditProfileResponseDTO getProfileById(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CreditProfileResponseDTO> getAllProfiles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteProfileById(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<CreditProfileResponseDTO> getProfileByUserId(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public CreditProfile converToEntity(CreditProfileDTO dto) {
+		CreditProfile profile=new CreditProfile();
+		profile.setCreditScore(dto.getCreditScore());
+		profile.setMonthlyIncome(dto.getMonthlyIncome());
+		
+		User user=userrepo.findById(dto.getUserId()).orElse(null);
+		if (user == null) {
+			//throw new UserNotFoundException("User Not Found With ID :" + id);
+		}
+		profile.setUser(user);
+		return profile;
+		
+	}
+	
+	public CreditProfileResponseDTO convertToDTO(CreditProfile profile) {
+		CreditProfileResponseDTO response=new CreditProfileResponseDTO();
+		response.setId(profile.getId());
+		response.setCreditScore(profile.getCreditScore());
+		response.setMonthlyIncome(profile.getMonthlyIncome());
+		response.setUserId(profile.getUser().getId());
+		
+		return response;
+		
+		
+	}
+
+}

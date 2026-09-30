@@ -1,0 +1,75 @@
+package com.fingenie.user_service.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "user_security")
+public class UserSecurity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String otp;
+	private LocalDateTime expiryTime;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	public UserSecurity() {
+
+	}
+
+	public UserSecurity(Long id, String otp, LocalDateTime expiryTime, User user) {
+		super();
+		this.id = id;
+		this.otp = otp;
+		this.expiryTime = expiryTime;
+		this.user = user;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public LocalDateTime getExpiryTime() {
+		return expiryTime;
+	}
+
+	public void setExpiryTime(LocalDateTime expiryTime) {
+		this.expiryTime = expiryTime;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "UserSecurity [id=" + id + ", otp=" + otp + ", expiryTime=" + expiryTime + ", user=" + user + "]";
+	}
+
+}

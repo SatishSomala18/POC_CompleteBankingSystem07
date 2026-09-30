@@ -1,0 +1,69 @@
+package com.fingenie.wealth_service.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.wealth_service.dto.LoanRequestDTO;
+import com.fingenie.wealth_service.entity.Loan;
+import com.fingenie.wealth_service.service.ILoanService;
+
+@RestController
+@RequestMapping("/loans")
+public class LoanController {
+
+	private final ILoanService loanService;
+
+	public LoanController(ILoanService loanService) {
+		this.loanService = loanService;
+	}
+
+	@PostMapping("/applyloan")
+	public Loan applyLoan(@RequestBody LoanRequestDTO dto) {
+		return loanService.applyLoan(dto);
+	}
+
+	@GetMapping("/getallloans")
+	public List<Loan> getAllLoans() {
+		return loanService.getAllLoans();
+	}
+
+	@GetMapping("/getloanby{loanId}")
+	public Loan getLoanById(@PathVariable Long loanId) {
+		return loanService.findById(loanId);
+	}
+
+	@PutMapping("/approveloanbyid/{loanId}")
+	public Loan approveLoan(@PathVariable Long loanId) {
+		return loanService.approveLoan(loanId);
+	}
+
+	@PutMapping("/rejectloanbyid/{loanId}")
+	public Loan rejectLoan(@PathVariable Long loanId) {
+		return loanService.rejectLoan(loanId);
+	}
+
+	@DeleteMapping("/deleteloanbyid/{loanId}")
+	public String deleteLoan(@PathVariable Long loanId) {
+		loanService.deleteById(loanId);
+		return "Loan deleted successfully";
+	}
+
+	@PutMapping("/updateloan/{loanId}")
+	public Loan updateLoan(@PathVariable Long loanId, @RequestBody LoanRequestDTO dto) {
+		return loanService.updateLoan(loanId, dto);
+	}
+
+	@GetMapping("getloansbystatus/{status}")
+	public List<Loan> getLoansByStatus(@PathVariable String status) {
+		return loanService.findByStatus(status);
+	}
+
+}

@@ -1,0 +1,112 @@
+package com.fingenie.banking_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fingenie.banking_service.DTO.AccountDTO;
+import com.fingenie.banking_service.DTO.UserResponseDTO;
+import com.fingenie.banking_service.entity.Account;
+import com.fingenie.banking_service.exception.AccountNotFoundException;
+import com.fingenie.banking_service.exception.UserNotFoundException;
+import com.fingenie.banking_service.feign.UserFeignClient;
+import com.fingenie.banking_service.repository.AccountRepo;
+
+import feign.FeignException;
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
+public class AccountServiceImp implements AccountService {
+
+	@Autowired
+	private AccountRepo accountRepo;
+
+	@Autowired
+	private UserFeignClient userFeignClient;
+
+	@Override
+	public Account createAccount(AccountDTO accdto) {
+
+		try {
+
+			UserResponseDTO user = userFeignClient.getUserById(accdto.getUserId());
+
+			Account account = new Account();
+
+			account.setUserId(user.getId());
+
+			account.setAccHolder(user.getName());
+
+			account.setBalance(0.0);
+
+			account.setAccType(accdto.getAccType());
+
+			return accountRepo.save(account);
+
+		}
+
+		catch (FeignException.NotFound e) {
+
+			throw new UserNotFoundException("User with ID " + accdto.getUserId() + " not found");
+		}
+	}
+
+	@Override
+	public Account getAccountById(Long id) {
+
+		return accountRepo.findById(id).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+
+		return accountRepo.findAll();
+	}
+
+	@Override
+	public List<Account> getAccountByUserId(Long userId) {
+
+		List<Account> accounts = accountRepo.findByUserId(userId);
+
+		if (accounts.isEmpty()) {
+			throw new AccountNotFoundException("Account not found for user");
+		}
+
+		return accounts;
+
+	}
+
+	@Override
+	public List<Account> UpdateAccount(AccountDTO accountDTO) {
+
+		List<Account> acc = accountRepo.findByUserId(accountDTO.getUserId());
+
+		for (int i = 0; i < acc.size(); i++) {
+			// Use .get(i) to read from a list instead of array brackets
+			acc.get(i).setAccHolder(accountDTO.getHolderName());
+
+		}
+
+		// 3. Save the entire list at once using saveAll() instead of save()
+		return accountRepo.saveAll(acc);
+	}
+
+	@Override
+	public void deleteById(long id) {
+		// TODO Auto-generated method stub
+//		Account acc = accountRepo.getById(id);
+
+		accountRepo.deleteById(id);
+
+	}
+
+	@Override
+	public void deleteByUserID(long userId) {
+		// TODO Auto-generated method stub
+		accountRepo.deleteByUserId(userId);
+
+	}
+
+}

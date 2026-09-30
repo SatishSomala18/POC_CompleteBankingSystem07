@@ -1,0 +1,21 @@
+package com.fingenie.user_service.dto;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UserResponseDTO {
+    private Long id;
+    private String name;
+    private String email;
+    private String roles;
+    private String phone;
+    private Integer creditScore;
+    private double monthlyIncome;
+    private String kycStatus;
+    private String kycDocumentType;
+    private String kycDocumentNumber;
+    private String riskCategory;
+
+}

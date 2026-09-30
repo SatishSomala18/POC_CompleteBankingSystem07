@@ -1,0 +1,177 @@
+/* NexaBank global theme override — re-skins Bootstrap 5's CSS variables
+   app-wide without touching component markup or logic. Must be imported
+   AFTER bootstrap.min.css. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root,
+[data-bs-theme=light] {
+  --bs-primary: #4f46e5;
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-primary-text-emphasis: #3730a3;
+  --bs-primary-bg-subtle: #e0e7ff;
+  --bs-primary-border-subtle: #c7d2fe;
+  --bs-link-color: #4f46e5;
+  --bs-link-color-rgb: 79, 70, 229;
+  --bs-link-hover-color: #3730a3;
+  --bs-link-hover-color-rgb: 55, 48, 163;
+
+  --bs-secondary: #64748b;
+  --bs-secondary-rgb: 100, 116, 139;
+
+  --bs-success: #059669;
+  --bs-success-rgb: 5, 150, 105;
+  --bs-success-text-emphasis: #065f46;
+  --bs-success-bg-subtle: #d1fae5;
+
+  --bs-info: #0284c7;
+  --bs-info-rgb: 2, 132, 199;
+  --bs-info-text-emphasis: #075985;
+  --bs-info-bg-subtle: #e0f2fe;
+
+  --bs-warning: #d97706;
+  --bs-warning-rgb: 217, 119, 6;
+  --bs-warning-text-emphasis: #92400e;
+  --bs-warning-bg-subtle: #fef3c7;
+
+  --bs-danger: #e11d48;
+  --bs-danger-rgb: 225, 29, 72;
+  --bs-danger-text-emphasis: #9f1239;
+  --bs-danger-bg-subtle: #ffe4e6;
+
+  --bs-body-font-family: 'Inter', var(--bs-font-sans-serif);
+  --bs-body-bg: #f5f6fb;
+  --bs-body-font-size: 0.9rem;
+
+  --bs-border-radius: 0.6rem;
+  --bs-border-radius-sm: 0.45rem;
+  --bs-border-radius-lg: 0.85rem;
+  --bs-border-radius-xl: 1.15rem;
+
+  /* Brand-specific tokens used by custom components */
+  --nb-brand-start: #1e1b4b;
+  --nb-brand-mid: #4338ca;
+  --nb-brand-end: #6d28d9;
+  --nb-accent: #f59e0b;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bs-body-bg);
+  font-size: 0.9rem;
+}
+
+/* Reduce oversized headings app-wide - CRA's default bootstrap scale reads
+   too large on dense dashboard pages. */
+h1, .h1 { font-size: 1.9rem; }
+h2, .h2 { font-size: 1.6rem; }
+h3, .h3 { font-size: 1.35rem; }
+h4, .h4 { font-size: 1.15rem; }
+h5, .h5 { font-size: 1rem; }
+h6, .h6 { font-size: 0.875rem; }
+.display-4 { font-size: 2.75rem; }
+.display-5 { font-size: 2.25rem; }
+.lead { font-size: 1rem; }
+
+.nb-brand-gradient {
+  background: linear-gradient(135deg, var(--nb-brand-start) 0%, var(--nb-brand-mid) 55%, var(--nb-brand-end) 100%);
+}
+
+.nb-shadow-soft {
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.08);
+}
+
+/* App-wide card/button/table polish - applies to every existing
+   react-bootstrap page without touching component markup. */
+.card {
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.09);
+}
+
+.card-header {
+  border-radius: 16px 16px 0 0 !important;
+  font-weight: 600;
+}
+
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.1rem;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-sm {
+  min-height: 32px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+}
+
+.btn-lg {
+  min-height: 46px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5, #6d28d9);
+  border: none;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: linear-gradient(135deg, #4338ca, #5b21b6);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #059669, #047857);
+  border: none;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e11d48, #9f1239);
+  border: none;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+  border-color: #e2e8f0;
+  padding: 10px 14px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.85rem 1rem;
+}
+
+.table thead th {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  background: #f8fafc;
+  border-bottom-width: 1px;
+}
+

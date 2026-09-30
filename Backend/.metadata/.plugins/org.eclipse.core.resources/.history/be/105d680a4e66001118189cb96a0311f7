@@ -1,0 +1,22 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.fingenie.user_service.dto.CreditProfileDTO;
+import com.fingenie.user_service.dto.CreditProfileResponseDTO;
+
+
+
+@Repository
+public interface ICreditProfileService {
+	
+	public CreditProfileResponseDTO addProfile(CreditProfileDTO profile);
+	public CreditProfileResponseDTO updateProfile(CreditProfileDTO profile,Long id);
+	public CreditProfileResponseDTO getProfileById(long id);
+	public List<CreditProfileResponseDTO> getAllProfiles();
+	public void deleteProfileById(Long id);
+	
+	public List<CreditProfileResponseDTO> getProfileByUserId(Long id);
+}

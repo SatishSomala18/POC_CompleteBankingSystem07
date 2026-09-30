@@ -1,0 +1,58 @@
+package com.fingenie.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.fingenie.user_service.dto.UserDTO;
+import com.fingenie.user_service.dto.UserResponseDTO;
+import com.fingenie.user_service.service.IUserService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserRestController {
+
+    @Autowired
+    private IUserService userService;
+
+    // ✅ Create User
+    @PostMapping
+    public UserResponseDTO addUser(@Valid @RequestBody UserDTO userDTO) {
+        return userService.addUser(userDTO);
+    }
+
+    // ✅ Update User
+    @PutMapping("/{id}")
+    public UserResponseDTO updateUser(@Valid @RequestBody UserDTO userDTO,
+                                      @PathVariable Long id) {
+        return userService.updateUser(userDTO, id);
+    }
+
+    // ✅ Get User by ID
+    @GetMapping("/{id}")
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    // ✅ Get All Users
+    @GetMapping
+    public List<UserResponseDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    // ✅ Delete User
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUserById(id);
+        return "User deleted successfully";
+    }
+
+    // ✅ Get Users by Role
+    @GetMapping("/role/{role}")
+    public List<UserResponseDTO> getUsersByRole(@PathVariable String role) {
+        return userService.getUsersByRole(role);
+    }
+}

@@ -1,0 +1,205 @@
+package com.fingenie.wealth_service.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fingenie.wealth_service.dto.Account;
+import com.fingenie.wealth_service.dto.DepositRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentResponseDTO;
+import com.fingenie.wealth_service.dto.UserResponseDTO;
+import com.fingenie.wealth_service.dto.WithdrawRequestDTO;
+import com.fingenie.wealth_service.entity.Investment;
+import com.fingenie.wealth_service.entity.Transaction;
+import com.fingenie.wealth_service.entity.UserInvestment;
+import com.fingenie.wealth_service.repository.InvestmentRepository;
+import com.fingenie.wealth_service.repository.UserInvestmentRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+
+@Service
+public class UserInvestmentServiceImp implements IUserInvestmentService {
+
+	private final UserInvestmentRepository userInvestmentRepo;
+	private final InvestmentRepository investmentRepo;
+
+	public UserInvestmentServiceImp(UserInvestmentRepository userInvestmentRepo, InvestmentRepository investmentRepo) {
+		this.userInvestmentRepo = userInvestmentRepo;
+		this.investmentRepo = investmentRepo;
+	}
+
+	@Autowired
+	RestTemplate rt;
+
+	@Autowired
+	private HttpServletRequest request;
+
+	@Override
+	public UserInvestmentResponseDTO addUserInvestment(UserInvestmentRequestDTO dto) {
+
+		if (dto.getAmount() <= 0) {
+			throw new RuntimeException("Amount must be greater than 0");
+		}
+
+		Investment investment = investmentRepo.findById(dto.getInvestmentId())
+				.orElseThrow(() -> new RuntimeException("Investment not found"));
+
+		Account acc = getAccount(dto.getAccountId());
+		
+		
+		WithdrawRequestDTO withdto=new WithdrawRequestDTO();
+		withdto.setAccountId(dto.getAccountId());
+		withdto.setAmount(dto.getAmount());
+		
+		Transaction tr=withdrawAmount(withdto);
+		
+
+		UserInvestment entity = new UserInvestment();
+		entity.setAccountId(dto.getAccountId());
+		entity.setUserId(acc.getUserId());
+		entity.setAmount(dto.getAmount());
+		entity.setInvestment(investment);
+
+		UserInvestment saved = userInvestmentRepo.save(entity);
+
+		return convertToDTO(saved);
+	}
+
+	@Override
+	public List<UserInvestment> getUserInvestmentByUserId(Long userId) {
+		return userInvestmentRepo.findByUserId(userId);
+	}
+
+	@Override
+	public List<UserInvestment> getUserInvestmentByInvestmentId(Long investmentId) {
+		return userInvestmentRepo.findByInvestmentId(investmentId);
+	}
+
+	@Override
+	public UserInvestment getUserInvestmentById(Long id) {
+		return userInvestmentRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("UserInvestment not found with ID: " + id));
+	}
+
+	@Override
+	public List<UserInvestment> getAllUserInvestment() {
+		return userInvestmentRepo.findAll();
+	}
+
+	@Override
+	@Transactional
+	public UserInvestment closeInvestmentById(Long id) {
+
+		UserInvestment userinvest = getUserInvestmentById(id);
+		
+		
+		
+		DepositRequestDTO depodto=new DepositRequestDTO();
+		Transaction tr=depositAmount(depodto);
+
+		userInvestmentRepo.deleteById(id);
+
+		return null;
+	}
+
+	@Override
+	@Transactional
+	public UserInvestment closeInvestmentByInvestmentId(Long id) {
+		
+	
+
+		userInvestmentRepo.deleteByInvestmentId(id);
+
+		return null;
+	}
+
+	@Override
+	public UserInvestment updateUserInvestment(Long id, UserInvestmentRequestDTO dto) {
+
+		UserInvestment existing = userInvestmentRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("UserInvestment not found"));
+
+		if (dto.getAmount() <= 0) {
+			throw new RuntimeException("Amount must be greater than 0");
+		}
+
+		existing.setAmount(dto.getAmount());
+
+		return userInvestmentRepo.save(existing);
+	}
+
+	private UserInvestmentResponseDTO convertToDTO(UserInvestment entity) {
+
+		UserInvestmentResponseDTO dto = new UserInvestmentResponseDTO();
+
+		UserResponseDTO user = getUser(entity.getUserId());
+
+		dto.setUserId(entity.getUserId());
+		dto.setInvestmentType(entity.getInvestment().getType());
+		dto.setAmount(entity.getAmount());
+		dto.setUserId(entity.getUserId());
+		dto.setAccountId(entity.getAccountId());
+		dto.setName(user.getName());
+
+		return dto;
+	}
+
+	public Account getAccount(Long userId) {
+
+		String authHeader = request.getHeader("Authorization");
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.set("Authorization", authHeader);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		String url = "http://BANKING-SERVICE/account/getaccountbyid/" + userId;
+
+		ResponseEntity<Account> response = rt.exchange(url, HttpMethod.GET, entity, Account.class);
+
+		return response.getBody();
+	}
+
+	public Transaction withdrawAmount(WithdrawRequestDTO dto) {
+
+		String authHeader = request.getHeader("Authorization");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", authHeader);
+
+		HttpEntity<WithdrawRequestDTO> entity = new HttpEntity<>(dto, headers);
+
+		String url = "http://BANKING-SERVICE/transaction/withdraw";
+
+		ResponseEntity<Transaction> response = rt.exchange(url, HttpMethod.POST, entity, Transaction.class);
+
+		return response.getBody();
+	}
+
+	public UserResponseDTO getUser(Long userId) {
+
+		String authHeader = request.getHeader("Authorization");
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.set("Authorization", authHeader);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		String url = "http://USER-SERVICE/users/getuserbyid/" + userId;
+
+		ResponseEntity<UserResponseDTO> response = rt.exchange(url, HttpMethod.GET, entity, UserResponseDTO.class);
+
+		return response.getBody();
+	}
+
+}

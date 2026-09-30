@@ -1,0 +1,52 @@
+package com.fingenie.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.fingenie.user_service.dto.UserSecurityDTO;
+import com.fingenie.user_service.dto.UserSecurityResponseDTO;
+import com.fingenie.user_service.service.IUserSecurityService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/usersecurity")
+public class UserSecurityRestController {
+
+    @Autowired
+    private IUserSecurityService service;
+
+    @PostMapping("addusersecurity")
+    public UserSecurityResponseDTO addUserSecurity(@Valid @RequestBody UserSecurityDTO dto) {
+        return service.addUserSecurity(dto);
+    }
+
+    @PutMapping("updateusersecurity/{id}")
+    public UserSecurityResponseDTO updateUserSecurity(@Valid @RequestBody UserSecurityDTO dto,
+                                                      @PathVariable Long id) {
+        return service.updateUserSecurity(dto, id);
+    }
+
+    @GetMapping("getusersecuritybyid/{id}")
+    public UserSecurityResponseDTO getUserSecurityById(@PathVariable Long id) {
+        return service.getUserSecurityById(id);
+    }
+
+    @DeleteMapping("deleteusersecuritybyid/{id}")
+    public String deleteUserSecurity(@PathVariable Long id) {
+        service.deleteUserSecurityById(id);
+        return "UserSecurity deleted successfully";
+    }
+
+    @GetMapping("/getallusersecurities")
+    public List<UserSecurityResponseDTO> getAllUserSecurities() {
+        return service.getAllUserSecurities();
+    }
+
+    @GetMapping("/user/{id}")
+    public UserSecurityResponseDTO getUserSecurityByUserId(@PathVariable Long id) {
+        return service.getUserSecurityByUserId(id);
+    }
+}

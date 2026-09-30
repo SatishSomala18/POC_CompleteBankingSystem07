@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: API_GATEWAY
+
+  cloud:
+    gateway:
+      routes:
+        - id: USER-MICROSERVICE
+          uri: lb://USER-MICROSERVICE
+          predicates:
+            - Path=/users/**,/usersecurity/**,/creditprofile/**
+
+        - id: BANKING-MICROSERVICE
+          uri: lb://BANKING-MICROSERVICE
+          predicates:
+            - Path=/product/**
+
+        - id: WEALTH-MICROSERVICE
+          uri: lb://WEALTH-MICROSERVICE
+          predicates:
+            - Path=/orders/**,/orderitem/**
+						
+						
+				- id: AUTH-MICROSERVICE
+					uri: lb://AUTH-MICROSERVICE
+					predicates:
+						- Path=/orders/**,/orderitem/**
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

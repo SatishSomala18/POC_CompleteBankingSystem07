@@ -1,0 +1,96 @@
+package com.fingenie.wealth_service.controller;
+
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.wealth_service.dto.LoanRequestDTO;
+import com.fingenie.wealth_service.dto.LoanResponseDTO;
+import com.fingenie.wealth_service.entity.Loan;
+import com.fingenie.wealth_service.service.ILoanService;
+
+@RestController
+@RequestMapping("/loans")
+public class LoanController {
+
+	private final ILoanService loanService;
+
+	public LoanController(ILoanService loanService) {
+		this.loanService = loanService;
+	}
+
+	
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping("/applyloan")
+	public LoanResponseDTO applyLoan(@RequestBody LoanRequestDTO dto) {
+		return loanService.applyLoan(dto);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/getallloans")
+	public List<LoanResponseDTO> getAllLoans() {
+		return loanService.getAllLoans();
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/getloanby{loanId}")
+	public LoanResponseDTO getLoanById(@PathVariable Long loanId) {
+		return loanService.findById(loanId);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/approveloanbyid/{loanId}")
+	public LoanResponseDTO approveLoan(@PathVariable Long loanId) {
+		return loanService.approveLoan(loanId);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/rejectloanbyid/{loanId}")
+	public LoanResponseDTO rejectLoan(@PathVariable Long loanId) {
+		return loanService.rejectLoan(loanId);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping("/deleteloanbyid/{loanId}")
+	public String deleteLoan(@PathVariable Long loanId) {
+		loanService.deleteById(loanId);
+		return "Loan deleted successfully";
+	}
+
+	
+	@PreAuthorize("hasRole('USER')")
+	@PutMapping("/updateloan/{loanId}")
+	public LoanResponseDTO updateLoan(@PathVariable Long loanId, @RequestBody LoanRequestDTO dto) {
+		return loanService.updateLoan(loanId, dto);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("getloansbystatus/{status}")
+	public List<LoanResponseDTO> getLoansByStatus(@PathVariable String status) {
+		return loanService.findByStatus(status);
+	}
+	
+	
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@GetMapping("getloansbyuserid/{userid}")
+	public List<LoanResponseDTO> getLoansByUserId(@PathVariable Long userId) {
+		return loanService.findByUserId(userId);
+	}
+	
+	
+
+}

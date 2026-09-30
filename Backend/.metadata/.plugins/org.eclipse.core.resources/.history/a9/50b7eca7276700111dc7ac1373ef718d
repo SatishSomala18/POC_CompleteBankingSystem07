@@ -1,0 +1,121 @@
+package com.fingenie.user_service.service;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fingenie.user_service.dto.CreditProfileDTO;
+import com.fingenie.user_service.dto.CreditProfileResponseDTO;
+import com.fingenie.user_service.entity.CreditProfile;
+import com.fingenie.user_service.entity.User;
+import com.fingenie.user_service.exceptions.CreditProfileNotFoundException;
+import com.fingenie.user_service.exceptions.UserNotFoundException;
+import com.fingenie.user_service.repository.CreditProfileRepository;
+import com.fingenie.user_service.repository.UserRepository;
+
+
+@Service
+public class CreditProfileServiceImp implements ICreditProfileService {
+
+	@Autowired
+
+	CreditProfileRepository repo;
+
+	
+	@Autowired
+	UserRepository userrepo;
+	
+
+	@Override
+	public CreditProfileResponseDTO addProfile(CreditProfileDTO profile) {
+		CreditProfile cp=convertToEntity(profile);
+		return convertToDTO(repo.save(cp));
+	}
+	
+	
+	@Override
+	public CreditProfileResponseDTO updateProfile(CreditProfileDTO profile, Long id) {
+		CreditProfile cp=repo.findById(id).orElse(null);
+		if(cp==null) {
+			throw new CreditProfileNotFoundException("Credit Profile Not Found With ID :" + id);
+		}
+		cp=convertToEntity(profile);
+		cp.setId(id);
+		return convertToDTO(repo.save(cp));
+		
+	}
+
+	
+	@Override
+	public CreditProfileResponseDTO getProfileById(Long id){
+		CreditProfile cp=repo.findById(id).orElse(null);
+		if(cp==null) {
+			throw new CreditProfileNotFoundException("Credit Profile Not Found With ID :" + id);
+		}
+		return convertToDTO(cp);
+	}
+
+	
+	@Override
+	public List<CreditProfileResponseDTO> getAllProfiles(){
+		List<CreditProfile> profiles=repo.findAll();
+		List<CreditProfileResponseDTO> result=new ArrayList<>();
+		for(CreditProfile profile:profiles) {
+			result.add(convertToDTO(profile));
+		}
+		return result;
+	}
+
+	
+	@Override
+	public void deleteProfileById(Long id) {
+		repo.deleteById(id);
+
+	}
+
+	
+
+	public CreditProfile convertToEntity(CreditProfileDTO dto) {
+		CreditProfile profile = new CreditProfile();
+		profile.setCreditScore(dto.getCreditScore());
+		profile.setMonthlyIncome(dto.getMonthlyIncome());
+
+		User user = userrepo.findById(dto.getUserId()).orElse(null);
+		if (user == null) {
+		 throw new UserNotFoundException("User Not Found With ID :" +dto.getUserId());
+		}
+		profile.setUser(user);
+		return profile;
+
+	}
+
+	public CreditProfileResponseDTO convertToDTO(CreditProfile profile) {
+		CreditProfileResponseDTO response = new CreditProfileResponseDTO();
+		response.setId(profile.getId());
+		response.setCreditScore(profile.getCreditScore());
+		response.setMonthlyIncome(profile.getMonthlyIncome());
+		response.setUserId(profile.getUser().getId());
+
+		return response;
+
+	}
+
+	@Override
+	public List<CreditProfileResponseDTO> getProfilesByUserId(Long id) {
+		List<CreditProfile> profiles=repo.findByUserId(id);
+		List<CreditProfileResponseDTO> result=new ArrayList<>();
+		for(CreditProfile profile:profiles) {
+			result.add(convertToDTO(profile));
+		}
+		return result;
+	}
+
+	
+
+	
+	
+	
+
+}

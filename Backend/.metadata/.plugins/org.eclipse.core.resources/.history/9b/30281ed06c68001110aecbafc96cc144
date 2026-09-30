@@ -1,0 +1,60 @@
+package com.fingenie.wealth_service.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fingenie.wealth_service.dto.UserInvestmentRequestDTO;
+import com.fingenie.wealth_service.dto.UserInvestmentResponseDTO;
+import com.fingenie.wealth_service.entity.Investment;
+import com.fingenie.wealth_service.service.IInvestmentService;
+
+@RestController
+@RequestMapping("/investments")
+public class InvestmentController {
+
+    private final IInvestmentService investmentService;
+
+    public InvestmentController(IInvestmentService investmentService) {
+        this.investmentService = investmentService;
+    }
+
+    @PostMapping("/invest")
+    public UserInvestmentResponseDTO invest(@RequestBody UserInvestmentRequestDTO dto) {
+        return investmentService.invest(dto);
+    }
+    
+    @PostMapping("/save")
+    public Investment saveInvestment(@RequestBody Investment investment) {
+        return investmentService.save(investment);
+    }
+    
+    @GetMapping("/getallinvestments")
+    public List<Investment> getAllInvestments() {
+        return investmentService.getAllInvestments();
+    }
+    
+    @GetMapping("/getuserinvestmentbyuserid/{userId}")
+    public List<UserInvestmentResponseDTO> getUserInvestments(@PathVariable Long userId) {
+        return investmentService.getUserInvestments(userId);
+    }
+    
+    @GetMapping("getinvestmentbyid/{id}")
+    public Investment getInvestmentById(@PathVariable Long id) {
+        return investmentService.findById(id);
+    }
+    
+    @DeleteMapping("/deleteinvestmentbyid/{id}")
+    public String deleteInvestment(@PathVariable Long id) {
+        investmentService.deleteById(id);
+        return "Investment deleted successfully";
+    }
+    
+    
+}

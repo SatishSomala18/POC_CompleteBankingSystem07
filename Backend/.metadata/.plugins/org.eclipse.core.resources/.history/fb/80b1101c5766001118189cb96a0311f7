@@ -1,0 +1,21 @@
+package com.fingenie.user_service.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.fingenie.user_service.dto.UserSecurityDTO;
+import com.fingenie.user_service.dto.UserSecurityResponseDTO;
+
+
+
+@Repository
+public interface IUserSecurityService {
+	
+	public UserSecurityResponseDTO addUserSecurity(UserSecurityDTO dto);
+	public UserSecurityResponseDTO updateUserSecurity(UserSecurityDTO dto,Long id);
+	public UserSecurityResponseDTO getUserSecurityById(Long id);
+	public void deleteUserSecurityById(Long id);
+	public List<UserSecurityResponseDTO> getAllUserSecurities();
+
+}
